@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><ns5:MessageCollection xmlns:ns2="http://www.fixm.aero/foundation/3.0" xmlns:ns3="http://www.fixm.aero/flight/3.0" xmlns:ns4="http://www.fixm.aero/base/3.0" xmlns:ns5="http://www.faa.aero/nas/3.0">
+  <message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns5:FlightMessageType">
+    <flight xsi:type="ns5:NasFlightType" flightType="SCHEDULED" centre="ZLC" source="HU" system="ATL" timestamp="2018-09-03T01:20:11.000Z">
+      <agreed>
+        <route xsi:type="ns5:NasRouteType" nasRouteText="KBWI.TERPZ6.MAULS.Q40.AEX.WAPPL4.KHOU/0209" initialFlightRules="IFR">
+          <estimatedElapsedTime elapsedTime="P0Y0M0DT0H34M0S">
+            <location>
+              <region airspaceType="FIR">KZTL</region>
+            </location>
+          </estimatedElapsedTime>
+          <estimatedElapsedTime elapsedTime="P0Y0M0DT1H29M0S">
+            <location>
+              <region airspaceType="FIR">KZME</region>
+            </location>
+          </estimatedElapsedTime>
+          <estimatedElapsedTime elapsedTime="P0Y0M0DT1H56M0S">
+            <location>
+              <region airspaceType="FIR">KZHU</region>
+            </location>
+          </estimatedElapsedTime>
+        </route>
+      </agreed>
+      <aircraftDescription xsi:type="ns5:NasAircraftType" equipmentQualifier="L" registration="N8627B" wakeTurbulence="M">
+        <aircraftType>
+          <icaoModelIdentifier>B738</icaoModelIdentifier>
+        </aircraftType>
+        <capabilities standardCapabilities="STANDARD">
+          <communication otherDataLinkCapabilities="1FANSP2PDC" selectiveCallingCode="CGBR">
+            <communicationCode>E2 E3</communicationCode>
+            <dataLinkCode>J4</dataLinkCode>
+          </communication>
+          <navigation otherNavigationCapabilities="RNP10">
+            <navigationCode>D G I W</navigationCode>
+            <performanceBasedCode>A1 D1 O1 S2 T1</performanceBasedCode>
+          </navigation>
+          <surveillance>
+            <surveillanceCode>S</surveillanceCode>
+          </surveillance>
+        </capabilities>
+        <accuracy>
+          <cmsFieldType phase="ARRIVAL" type="RNV" uom="NAUTICAL_MILES">1.0</cmsFieldType>
+          <cmsFieldType phase="ENROUTE" type="RNV" uom="NAUTICAL_MILES">1.0</cmsFieldType>
+          <cmsFieldType phase="DEPARTURE" type="RNV" uom="NAUTICAL_MILES">1.0</cmsFieldType>
+        </accuracy>
+      </aircraftDescription>
+      <arrival xsi:type="ns5:NasArrivalType" arrivalPoint="KHOU">
+        <arrivalAerodromeAlternate xsi:type="ns4:IcaoAerodromeReferenceType" code="KDAL"/>
+        <runwayPositionAndTime>
+          <runwayTime>
+            <estimated time="2018-09-03T02:09:00Z"/>
+          </runwayTime>
+        </runwayPositionAndTime>
+      </arrival>
+      <departure xsi:type="ns5:NasDepartureType" departurePoint="KBWI">
+        <runwayPositionAndTime>
+          <runwayTime>
+            <actual time="2018-09-02T23:29:00Z"/>
+          </runwayTime>
+        </runwayPositionAndTime>
+      </departure>
+      <enRoute xsi:type="ns5:NasEnRouteType">
+        <beaconCodeAssignment>
+          <currentBeaconCode>2545</currentBeaconCode>
+        </beaconCodeAssignment>
+      </enRoute>
+      <flightIdentification xsi:type="ns5:NasFlightIdentificationType" computerId="253" siteSpecificPlanId="81" aircraftIdentification="SWA3651"/>
+      <flightStatus xsi:type="ns5:NasFlightStatusType" fdpsFlightStatus="ACTIVE"/>
+      <gufi codeSpace="urn:uuid">f28ec5a9-16a3-45be-aa43-bfe731cf9bd9</gufi>
+      <operator>
+        <operatingOrganization>
+          <organization name="SWA"/>
+        </operatingOrganization>
+      </operator>
+      <supplementalData xsi:type="ns5:NasSupplementalDataType">
+        <additionalFlightInformation>
+          <nameValue name="MSG_SEQ_NO" value="2167610"/>
+          <nameValue name="FDPS_GUFI" value="us.fdps.2018-09-02T21:22:55Z.000/22/100"/>
+          <nameValue name="FLIGHT_PLAN_SEQ_NO" value="6"/>
+        </additionalFlightInformation>
+      </supplementalData>
+      <assignedAltitude>
+        <simple uom="FEET">36000.0</simple>
+      </assignedAltitude>
+      <coordination coordinationTime="2018-09-03T01:24:00Z" coordinationTimeHandling="E">
+        <coordinationFix xsi:type="ns4:RelativePointType" fix="MCB">
+          <distance uom="NAUTICAL_MILES">59.0</distance>
+          <radial uom="DEGREES">303.0</radial>
+        </coordinationFix>
+      </coordination>
+      <flightPlan identifier="KW76975100"/>
+      <requestedAirspeed>
+        <nasAirspeed uom="KNOTS">461.0</nasAirspeed>
+      </requestedAirspeed>
+    </flight>
+  </message>
+  <message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns5:FlightMessageType">
+    <flight xsi:type="ns5:NasFlightType" centre="ZLC" source="TH" system="ATL" timestamp="2018-09-03T00:23:42.524Z">
+      <arrival xsi:type="ns5:NasArrivalType" arrivalPoint="KASE">
+        <runwayPositionAndTime>
+          <runwayTime>
+            <estimated time="2018-09-03T01:42:00Z"/>
+          </runwayTime>
+        </runwayPositionAndTime>
+      </arrival>
+      <controllingUnit xsi:type="ns4:IdentifiedUnitReferenceType" unitIdentifier="ZLC" sectorIdentifier="43"/>
+      <departure xsi:type="ns5:NasDepartureType" departurePoint="KRNO">
+        <runwayPositionAndTime>
+          <runwayTime>
+            <actual time="2018-09-02T23:59:00Z"/>
+          </runwayTime>
+        </runwayPositionAndTime>
+      </departure>
+      <enRoute xsi:type="ns5:NasEnRouteType">
+        <position xsi:type="ns5:NasAircraftPositionType" targetPositionTime="2018-09-03T00:23:37Z" positionTime="2018-09-03T00:23:37Z" reportSource="SURVEILLANCE">
+          <actualSpeed>
+            <surveillance uom="KNOTS">415.0</surveillance>
+          </actualSpeed>
+          <altitude uom="FEET">39200.0</altitude>
+          <position xsi:type="ns4:LocationPointType">
+            <location srsName="urn:ogc:def:crs:EPSG::4326">
+              <pos>39.281389 -117.009722</pos>
+            </location>
+          </position>
+          <targetAltitude uom="FEET">39200.0</targetAltitude>
+          <targetPosition srsName="urn:ogc:def:crs:EPSG::4326">
+            <pos>39.281111 -117.010278</pos>
+          </targetPosition>
+          <trackVelocity>
+            <x uom="KNOTS">415.0</x>
+            <y uom="KNOTS">19.0</y>
+          </trackVelocity>
+        </position>
+      </enRoute>
+      <flightIdentification xsi:type="ns5:NasFlightIdentificationType" computerId="760" siteSpecificPlanId="115" aircraftIdentification="N925EM"/>
+      <flightStatus xsi:type="ns5:NasFlightStatusType" fdpsFlightStatus="ACTIVE"/>
+      <gufi codeSpace="urn:uuid">4f99f2a8-9cb4-4e9a-80a0-c9e26ecc7991</gufi>
+      <supplementalData xsi:type="ns5:NasSupplementalDataType">
+        <additionalFlightInformation>
+          <nameValue name="MSG_SEQ_NO" value="13871393"/>
+          <nameValue name="FDPS_GUFI" value="us.fdps.2018-09-02T20:02:35Z.000/14/100"/>
+          <nameValue name="FLIGHT_PLAN_SEQ_NO" value="6"/>
+        </additionalFlightInformation>
+      </supplementalData>
+      <assignedAltitude>
+        <simple uom="FEET">45000.0</simple>
+      </assignedAltitude>
+      <flightPlan identifier="KO72155100"/>
+    </flight>
+  </message>
+</ns5:MessageCollection>
