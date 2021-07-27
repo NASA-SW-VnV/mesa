@@ -14,6 +14,14 @@ Further information about MESA and the installation guide can be found in the fi
 For questions and further information on MESA, please contact [Nastaran 
 Shafiei](https://ti.arc.nasa.gov/profile/nshafiei/) at <nasatarn.shafiei@nasa.gov>.
 
+### Publications
+- [Actor-based Runtime Verification with MESA](https://link.springer.com/chapter/10.1007%2F978-3-030-60508-7_12). 
+Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz.
+In: Jyotirmoy Deshmukh and Dejan Nickovic (eds) Runtime Verification. RV 2020. Lecture Notes in Computer Science, vol 12399. Springer, Cham.
+
+- [Empirical Study of Actor-based Runtime Verification](https://ti.arc.nasa.gov/publications/20205004231/download/). Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz. 
+NASA Technial Report: NASA/TM–20205004231.
+
 ### License
 
 This software is released under the [NASA Open Source Agreement Version 1.3](license.pdf).
