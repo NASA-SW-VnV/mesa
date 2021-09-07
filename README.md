@@ -1,9 +1,6 @@
 ## MESA: MEssage-based System Analysis
 
-MESA is a runtime verification framework which allows for using concurrent monitors 
-to check for properties specified in data parameterized temporal logic and 
-state machines. MESA adopts the actor programming model, and is a framework 
-for building actor-based monitoring systems. We used 
+MESA is a framework that provides runtime verification of distributed systems in a nonintrusive manner. It checks a trace of the system under test against properties of interest, expressed in state machines and linear temporal logic formulas, where the trace is a sequence of messages entailing information about the run of the system. MESA is written in Scala, and employs the actor programming model, as implemented in the Akka framework. Finally, using asynchronous communicating actors to capture properties, it allows for decentralized monitoring of the system.
 
 ### User Manual
 
