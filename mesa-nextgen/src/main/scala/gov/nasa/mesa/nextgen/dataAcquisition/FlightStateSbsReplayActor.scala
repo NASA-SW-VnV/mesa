@@ -91,7 +91,7 @@ class FlightStateSbsReader(iStream: InputStream, pathName: String="<unknown>",
   override val updater: SbsUpdater = new FstateSbsArchiveUpdater
 
   class FstateSbsArchiveUpdater extends SbsUpdater(updateTrack,dropTrack,
-    defaultZone) {
+    Some(this), defaultZone) {
     override protected def acquireMoreData: Boolean = refillBuf
   }
 

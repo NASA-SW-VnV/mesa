@@ -4,7 +4,7 @@ object Dependencies {
   lazy val latestVersion = "latest.release"
   lazy val raceVersion = "1.8.0"
 
-  val typesafeConfig = "com.typesafe" % "config" % "1.4.0"
+  val typesafeConfig = "com.typesafe" % "config" % "1.4.1"
 
   val akkaVersion = "2.6.4" //"2.6.9 in race
   val akkaOrg = "com.typesafe.akka"
@@ -26,7 +26,7 @@ object Dependencies {
   val raceNetJms = "gov.nasa.race" %% "race-net-jms" % raceVersion
   val raceAir = "gov.nasa.race" %% "race-air" % raceVersion
   val raceWwAir = "gov.nasa.race" %% "race-ww-air" % raceVersion
-  val raceWw = "gov.nasa.race" %% "race-ww-air" % raceVersion
+  val raceWw = "gov.nasa.race" %% "race-ww" % raceVersion
   val raceTestKit = "gov.nasa.race" %% "race-testkit" % raceVersion
 
   //--- dependencies to DSLs used for specification
