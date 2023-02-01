@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   lazy val latestVersion = "latest.release"
-  lazy val raceVersion = "1.8.0"
+  lazy val raceVersion = "1.8.1"
 
   val typesafeConfig = "com.typesafe" % "config" % "1.4.1"
 

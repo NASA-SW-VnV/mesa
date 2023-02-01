@@ -66,7 +66,7 @@ class InstantReplayActor(override val config: Config) extends
   val delayMillis: Int = config.getIntOrElse("delay-millis", 0)
 
   val reader: ArchiveReader = createReader
-  var noMoreData: Boolean = !reader.hasMoreData
+  var noMoreData: Boolean = !reader.hasMoreArchivedData
 
   /** Creates an instance of gov.nasa.race.archive.ArchiveReader to read
     * ArchiveEntry objects from the given archive.

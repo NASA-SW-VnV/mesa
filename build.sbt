@@ -3,15 +3,15 @@ import Dependencies._
 
 name := "mesa"
 
-scalacOptions in (Compile, doc) += "-no-java-comments"
+Compile / doc / scalacOptions += "-no-java-comments"
 
 // factor out common settings across the sub-projects
 lazy val commonSettings = Seq(
   organization := "gov.nasa",
-  version := "1.0",
-  scalaVersion := "2.13.2",
-  mainClass in Compile := Some("gov.nasa.mesa.core.MesaMain"),
-  scalacOptions in (Compile, doc) += "-no-java-comments",
+  version := "1.1",
+  scalaVersion := "2.13.8",
+  Compile / mainClass := Some("gov.nasa.mesa.core.MesaMain"),
+  Compile / doc / scalacOptions += "-no-java-comments",
   // uncomment to get the full stack trace for failed tests
   //testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oF"),
   libraryDependencies ++=

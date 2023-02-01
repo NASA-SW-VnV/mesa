@@ -30,7 +30,7 @@
   */
 package gov.nasa.mesa.nextgen.core
 
-import gov.nasa.race.geo.Datum
+import gov.nasa.race.geo.{Datum, GeoPosition}
 import gov.nasa.race.uom.Area.√
 import gov.nasa.race.uom.Length.Meters
 import gov.nasa.race.uom.{Angle, Length}
@@ -78,8 +78,8 @@ object Geo {
     var minDevWaypoint: Option[Waypoint] = None
 
     for (w <- waypoints) {
-      val distance = getEuclideanDistance(state.position.φ, state.position.λ,
-        Meters(0), w.position.φ, w.position.λ, Meters(0))
+      val distance = getEuclideanDistance(GeoPosition(state.position.φ, state.position.λ,
+        Meters(0)), GeoPosition(w.position.φ, w.position.λ, Meters(0)))
 
       if (distance <= proximity && distance < minDev) {
         minDevWaypoint = Some(w)
@@ -102,17 +102,16 @@ object Geo {
   : Boolean = {
     val alt1 = Meters(0)
     val alt2 = Meters(0)
-    getEuclideanDistance(state.position.φ, state.position.λ, alt1,
-      wp.position.φ, wp.position.λ, alt2) <= proximity
+    getEuclideanDistance(GeoPosition(state.position.φ, state.position.λ, alt1),
+      GeoPosition(wp.position.φ, wp.position.λ, alt2)) <= proximity
   }
 
   /** Returns the Euclidean distance between the two given geographic
     * coordinates.
     */
-  def getEuclideanDistance(φ1: Angle, λ1: Angle, alt1: Length, φ2: Angle,
-                           λ2: Angle, alt2: Length): Length = {
-    val p1 = Datum.wgs84ToECEF(φ1, λ1, alt1)
-    val p2 = Datum.wgs84ToECEF(φ2, λ2, alt2)
-    √((p1.x - p2.x).`²` + (p1.y - p2.y).`²` + (p1.z - p2.z).`²`)
+  def getEuclideanDistance(pos1: GeoPosition, pos2: GeoPosition): Length = {
+      val p1 = Datum.wgs84ToECEF(pos1)
+      val p2 = Datum.wgs84ToECEF(pos2)
+      √((p1.x - p2.x).`²` + (p1.y - p2.y).`²` + (p1.z - p2.z).`²`)
   }
 }

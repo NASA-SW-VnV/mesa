@@ -55,8 +55,10 @@ import scala.concurrent.duration.Duration
   * @param config the actor configuration
   */
 class FlightStateSbsReplayActor(val config: Config)
-  extends Replayer[FlightStateSbsReader] with PeriodicRaceActor
+  extends Replayer with PeriodicRaceActor
     with SbsImporter {
+    type R = FlightStateSbsReader
+
     class DropCheckSBSReader (conf: Config)
       extends FlightStateSbsReader(config) {
       override def dropTrack (id: String, cs: String, date: DateTime,
@@ -88,17 +90,17 @@ class FlightStateSbsReader(iStream: InputStream, pathName: String="<unknown>",
     conf.getMappedStringOrElse("default-zone", ZoneId.of, ZoneId.systemDefault)
   )
 
-  override val updater: SbsUpdater = new FstateSbsArchiveUpdater
+  override val updater: SbsUpdater = new SbsUpdater( Some(this), defaultZone)
 
-  class FstateSbsArchiveUpdater extends SbsUpdater(updateTrack,dropTrack,
-    Some(this), defaultZone) {
-    override protected def acquireMoreData: Boolean = refillBuf
-  }
+//  class FstateSbsArchiveUpdater extends SbsUpdater(updateTrack,dropTrack,
+//    Some(this), defaultZone) {
+//    override protected def acquireMoreData: Boolean = refillBuf
+//  }
 
-  override def updateTrack (track: TrackedObject): Boolean = {
-    val fstate = new FlightState(track.id, track.cs, track.position,
-      track.speed, track.heading, track.vr, track.date, track.status)
-    next = someEntry(fstate.date, fstate)
-    false
-  }
+//  override def updateTrack (track: TrackedObject): Boolean = {
+//    val fstate = new FlightState(track.id, track.cs, track.position,
+//      track.speed, track.heading, track.vr, track.date, track.status)
+//    next = someEntry(fstate.date, fstate)
+//    false
+//  }
 }
