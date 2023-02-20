@@ -416,7 +416,7 @@ abstract class SfdpsParser extends MessageCollectionParser {
     val departureProcedure = FlightPlan.getDepartureProcedure(route)
     val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
     val flightPlan =
-      new FlightPlan(cs, route, departureProcedure, arrivalProcedure)
+      new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
 
     if (cs != null) {
       val track = createSfdpsObject(id, cs, lat, lon,

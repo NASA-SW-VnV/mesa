@@ -55,7 +55,7 @@ class MESAFlightStateViewerLayer(override val raceViewer: RaceViewer,
   override def handleSFDPSMessage: Receive = {
     case BusEvent(_,
     FlightInfo(state@FlightState(_, _, _, _, _, _, _, _),
-    FlightTrack(_, _, _, _, _, _, _)), _) =>
+    FlightTrack(_, _, _, _, _, _)), _) =>
       handleTrack(state)
     case BusEvent(_, state@FlightState(_, _, _, _, _, _, _, _), _) =>
       handleTrack(state)

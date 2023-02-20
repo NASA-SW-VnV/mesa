@@ -261,7 +261,6 @@ object FlightStateCompleted {
   * @param arrivalPoint the arrival airport
   * @param arrivalDate the time of arrival
   * @param fplan the flight plan information
-  * @param flightRules flight rules which is either IFR or VFR
   * @param equipmentQualifier the equipment qualifier
   */
 class FlightTrack(id: String,
@@ -279,7 +278,6 @@ class FlightTrack(id: String,
                   arrivalPoint: String = "?",
                   arrivalDate: DateTime = DateTime.UndefinedDateTime,
                   val fplan: FlightPlan,
-                  val flightRules: String,
                   val equipmentQualifier: String)
   extends FlightState(id, cs, position, speed, heading, vr, date, status, src,
     departurePoint, departureDate, arrivalPoint, arrivalDate) {
@@ -311,7 +309,6 @@ object FlightTrack {
     * @param arrivalPoint the arrival airport
     * @param arrivalDate the time of arrival
     * @param fplan the flight plan information
-    * @param flightRules flight rules which is either IFR or VFR
     * @param equipmentQualifier the equipment qualifier
     * @return an instance of the class FlightTrack.
     */
@@ -322,11 +319,10 @@ object FlightTrack {
             departureDate: DateTime = DateTime.UndefinedDateTime,
             arrivalPoint: String = "?",
             arrivalDate: DateTime = DateTime.UndefinedDateTime,
-            fplan: FlightPlan, flightRules: String,
-            equipmentQualifier: String): FlightState = {
+            fplan: FlightPlan, equipmentQualifier: String): FlightState = {
     new FlightTrack(id, cs, position, speed, heading, vr, date, status, src,
       departurePoint, departureDate, arrivalPoint, arrivalDate, fplan,
-      flightRules, equipmentQualifier)
+      equipmentQualifier)
   }
 
   /** A constructor which takes relevant arguments and creates a FlightTrack
@@ -337,18 +333,16 @@ object FlightTrack {
     * @param departurePoint the departure airport
     * @param arrivalPoint the arrival airport
     * @param fplan the flight plan information
-    * @param flightRules flight rules which is either IFR or VFR
     * @param equipmentQualifier the equipment qualifier
     * @return an instance of the class FlightTrack.
     */
   def apply(id: String, cs: String,
             departurePoint: String, arrivalPoint: String,
-            fplan: FlightPlan, flightRules: String,
-            equipmentQualifier: String): FlightTrack = {
+            fplan: FlightPlan, equipmentQualifier: String): FlightTrack = {
     new FlightTrack(id, cs, GeoPosition.undefinedPos, Speed.UndefinedSpeed,
       Angle.UndefinedAngle, Speed.UndefinedSpeed, DateTime.UndefinedDateTime,
       0, "?", departurePoint, DateTime.UndefinedDateTime, arrivalPoint,
-      DateTime.UndefinedDateTime, fplan, flightRules, equipmentQualifier)
+      DateTime.UndefinedDateTime, fplan, equipmentQualifier)
   }
 
   /** Takes a FlightTrack object and gives back the arguments which is mostly
@@ -359,8 +353,8 @@ object FlightTrack {
     *         given FlightTrack.
     */
   def unapply(ft: FlightTrack): Option[(String, String, String, String,
-    FlightPlan, String, String)] = {
+    FlightPlan, String)] = {
     Some(ft.id, ft.cs, ft.departurePoint, ft.arrivalPoint, ft.fplan,
-      ft.flightRules, ft.equipmentQualifier)
+      ft.equipmentQualifier)
   }
 }

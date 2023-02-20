@@ -45,17 +45,20 @@ import gov.nasa.race.uom.{Length, Speed}
   * @param route the flight plan specified in the ICAO format
   * @param departure the departure transition
   * @param arrival the arrival transition
+  * @param flightRules flight rules which is either IFR or VFR
   */
 case class FlightPlan(val cs: String,
                       val route: String,
                       val departure: Option[Procedure],
-                      val arrival: Option[Procedure]) {
+                      val arrival: Option[Procedure],
+                      val flightRules: String) {
 
   override def toString =
     s"FlightPlan(cs: $cs, " +
       s"route: $route, " +
       s"departure: ${departure.getOrElse(None)}, " +
-      s"arrival: ${arrival.getOrElse(None)})"
+      s"arrival: ${arrival.getOrElse(None)}, " +
+      s"flightRules: $flightRules)"
 
   /** Checks if the flight is assigned with an arrival procedure.
     *

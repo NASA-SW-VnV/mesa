@@ -130,12 +130,12 @@ class Sfdps2FlightTrackTranslator extends SfdpsParser {
     if (route != "?") {
       val departureProcedure = FlightPlan.getDepartureProcedure(route)
       val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
-      val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure)
+      val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
 
       FlightTrack(id, cs, GeoPosition(Degrees(lat),Degrees(lon),alt), spd,
         Degrees(Math.atan2(vx, vy).toDegrees), vr, date, status, src,
         departurePoint, departureDate, arrivalPoint, arrivalDate, plan,
-        flightRules, equipmentQualifier)
+        equipmentQualifier)
     } else null
   }
 }
@@ -193,11 +193,11 @@ class SfdpsFullTranslator extends SfdpsParser {
       else if(route != "?") {
         val departureProcedure = FlightPlan.getDepartureProcedure(route)
         val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
-        val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure)
+        val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
         FlightTrack(id, cs, GeoPosition(Degrees(lat),Degrees(lon),alt), spd,
           Degrees(Math.atan2(vx, vy).toDegrees), vr, date, status, src,
           departurePoint, departureDate, arrivalPoint, arrivalDate, plan,
-          flightRules, equipmentQualifier)
+          equipmentQualifier)
       }
       else null
     }

@@ -62,7 +62,7 @@ class FilteredFlightInfoGenerator(val config: Config) extends MesaActor {
     *         logic.
     */
   override def handleMessage: Receive = {
-    case BusEvent(_, ft@FlightTrack(_, cs, _, _, _, _, _), _) =>
+    case BusEvent(_, ft@FlightTrack(_, cs, _, _, _, _), _) =>
       val tInfo = tiList.get(cs)
       if (tInfo.isEmpty) {
         if (flightTrackFilter.pass(ft))

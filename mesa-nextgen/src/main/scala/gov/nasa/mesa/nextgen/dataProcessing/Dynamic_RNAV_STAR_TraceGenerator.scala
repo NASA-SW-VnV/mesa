@@ -66,7 +66,7 @@ class Dynamic_RNAV_STAR_TraceGenerator(val config: Config) extends MesaActor {
     */
   override def handleMessage: Receive = {
     case BusEvent(_, finfo@FlightInfo(state@FlightState(_, _, _, _, _, _, _, _),
-    ft@FlightTrack(_, _, _, _, _, _, _)), _) =>
+    ft@FlightTrack(_, _, _, _, _, _)), _) =>
       // if the star is not rnav, the message is ignored
       if (Airport.isRnavStar(ft.arrivalPoint,
         ft.getArrivalProcedure.fold("")(_.name))) {

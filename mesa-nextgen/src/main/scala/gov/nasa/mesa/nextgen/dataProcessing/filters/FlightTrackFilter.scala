@@ -159,7 +159,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     *         configuration file, otherwise returns false.
     */
   def matchFlightRules(flightTrack: FlightTrack): Boolean = {
-    flightRules.isEmpty || flightRules.contains(flightTrack.flightRules)
+    flightRules.isEmpty || flightRules.contains(flightTrack.fplan.flightRules)
   }
 
   /** Checks if the flight equipment qualifier matches the specification in the

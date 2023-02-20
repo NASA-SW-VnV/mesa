@@ -271,7 +271,7 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
           s"$star ${Console.RESET}")
       // if the flight is assigned to different procedure we need to drop the
       // analysis
-      case StarChanged(ti@FlightTrack(_, `cs`, _, _, _, _, _)) => dropState(cs)
+      case StarChanged(ti@FlightTrack(_, `cs`, _, _, _, _)) => dropState(cs)
     }
   }
 

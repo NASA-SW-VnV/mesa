@@ -53,7 +53,7 @@ class FlightTrackFilterSpec extends RaceActorSpec with AnyWordSpecLike {
   val flightRules = "IFR"
   val equipmentQualifier = "I"
   val ti = FlightTrack(id, cs, departureAirport, arrivalAirport,
-    new FlightPlan(cs, route, departure, arrival), flightRules,
+    new FlightPlan(cs, route, departure, arrival, flightRules),
     equipmentQualifier)
 
   "FlightTrackFilter" must {
