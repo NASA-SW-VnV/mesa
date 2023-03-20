@@ -53,13 +53,11 @@ class MESAFlightStateViewerLayer(override val raceViewer: RaceViewer,
     * @return a partial function with the handleSFDPSMessage logic
     */
   override def handleSFDPSMessage: Receive = {
-    case BusEvent(_,
-    FlightInfo(state@FlightState(_, _, _, _, _, _, _, _),
-    FlightTrack(_, _, _, _, _, _)), _) =>
-      handleTrack(state)
+    case BusEvent(_, ft@ExtendedFlightState(_, _, _, _, _, _, _, _, _, _, _, _), _) =>
+      if(ft.position.isDefined)
+        handleTrack(ft)
     case BusEvent(_, state@FlightState(_, _, _, _, _, _, _, _), _) =>
       handleTrack(state)
-    case BusEvent(_, msg: FlightTrack, _) => // ignore
     case BusEvent(_, msg: StarChanged, _) => // ignore
     case BusEvent(_, msg: FlightCompleted, _) => // ignore
     case BusEvent(_, msg: TrackTerminationMessage, _) =>

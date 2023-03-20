@@ -31,11 +31,11 @@
 package gov.nasa.mesa.nextgen.dataProcessing.filters
 
 import com.typesafe.config.Config
-import gov.nasa.mesa.nextgen.core.FlightTrack
+import gov.nasa.mesa.nextgen.core.ExtendedFlightState
 import gov.nasa.race.config.ConfigUtils._
 import gov.nasa.race.config.ConfigurableFilter
 
-/** This class represents a filter for FlightTrack objects. It allows actors to
+/** This class represents a filter for ExtendedFlightState objects. It allows actors to
   * filter out FlightTracks based on the setting specified in the filter
   * configuration.
   *
@@ -71,28 +71,28 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
   val arrivalTransition: Seq[String] =
     config.getStringListOrElse("arrival-transition", emptySeq)
 
-  /** Filters out those FlightTrack object that do not match specifications
+  /** Filters out those ExtendedFlightState object that do not match specifications
     * in the actor configuration.
     *
     * @param o a message
-    * @return true if the message is of type of FlightTrack and matches the
+    * @return true if the message is of type of ExtendedFlightState and matches the
     *         specifications in the configuration file, otherwise returns false.
     */
   override def pass(o: Any): Boolean = {
     o match {
-      case flightTrack: FlightTrack => matchConfig(flightTrack)
+      case flightTrack: ExtendedFlightState => matchConfig(flightTrack)
       case _ => false
     }
   }
 
-  /** Matches the given FlightTrack with the config setting. FlightTracks that
+  /** Matches the given ExtendedFlightState with the config setting. FlightTracks that
     * doesn't match the setting are getting filtered.
     *
     * @param flightTrack an object storing the flight track information
-    * @return true if the FlightTrack object matches the specifications in the
+    * @return true if the ExtendedFlightState object matches the specifications in the
     *         configuration file, otherwise returns false.
     */
-  def matchConfig(flightTrack: FlightTrack): Boolean = {
+  def matchConfig(flightTrack: ExtendedFlightState): Boolean = {
     // match ids
     matchId(flightTrack) && matchCs(flightTrack) &&
     // match airports
@@ -114,7 +114,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight id matches the specification in the
     *         configuration file, otherwise returns false.
     */
-  def matchId(flightTrack: FlightTrack): Boolean = {
+  def matchId(flightTrack: ExtendedFlightState): Boolean = {
     id.isEmpty || id.contains(flightTrack.id)
   }
 
@@ -125,7 +125,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight call sign matches the specification in the
     *         configuration file, otherwise returns false.
     */
-  def matchCs(flightTrack: FlightTrack): Boolean = {
+  def matchCs(flightTrack: ExtendedFlightState): Boolean = {
     cs.isEmpty || cs.contains(flightTrack.cs)
   }
 
@@ -136,7 +136,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight departure airport matches the specification in
     *         the configuration file, otherwise returns false.
     */
-  def matchDeparturePoint(flightTrack: FlightTrack): Boolean = {
+  def matchDeparturePoint(flightTrack: ExtendedFlightState): Boolean = {
     departurePoint.isEmpty || departurePoint.contains(flightTrack.departurePoint)
   }
 
@@ -147,7 +147,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight arrival airport matches the specification in
     *         the configuration file, otherwise returns false.
     */
-  def matchArrivalPoint(flightTrack: FlightTrack): Boolean = {
+  def matchArrivalPoint(flightTrack: ExtendedFlightState): Boolean = {
     arrivalPoint.isEmpty || arrivalPoint.contains(flightTrack.arrivalPoint)
   }
 
@@ -158,7 +158,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight rules matches the specification in the
     *         configuration file, otherwise returns false.
     */
-  def matchFlightRules(flightTrack: FlightTrack): Boolean = {
+  def matchFlightRules(flightTrack: ExtendedFlightState): Boolean = {
     flightRules.isEmpty || flightRules.contains(flightTrack.fplan.flightRules)
   }
 
@@ -169,7 +169,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight equipment qualifier matches the specification
     *         in the configuration file, otherwise returns false.
     */
-  def matchEquipmentQualifier(flightTrack: FlightTrack): Boolean = {
+  def matchEquipmentQualifier(flightTrack: ExtendedFlightState): Boolean = {
     equipmentQualifier.isEmpty ||
       equipmentQualifier.contains(flightTrack.equipmentQualifier)
   }
@@ -181,7 +181,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight departure procedure matches the specification
     *         in the configuration file, otherwise returns false.
     */
-  def matchDepartureProcedure(flightTrack: FlightTrack): Boolean = {
+  def matchDepartureProcedure(flightTrack: ExtendedFlightState): Boolean = {
     departureProcedure.isEmpty ||
       flightTrack.fplan.hasDepartureProcedure &&
         departureProcedure.contains(flightTrack.fplan.departure.get.name)
@@ -194,7 +194,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight departure transition matches the specification
     *         in the configuration file, otherwise returns false.
     */
-  def matchDepartureTransition(flightTrack: FlightTrack): Boolean = {
+  def matchDepartureTransition(flightTrack: ExtendedFlightState): Boolean = {
     departureTransition.isEmpty ||
       flightTrack.fplan.hasDepartureProcedure &&
         departureTransition.contains(flightTrack.fplan.departure.get.transition)
@@ -207,7 +207,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight arrival procedure matches the specification
     *         in the configuration file, otherwise returns false.
     */
-  def matchArrivalProcedure(flightTrack: FlightTrack): Boolean = {
+  def matchArrivalProcedure(flightTrack: ExtendedFlightState): Boolean = {
     arrivalProcedure.isEmpty ||
       flightTrack.fplan.hasArrivalProcedure &&
         arrivalProcedure.contains(flightTrack.fplan.arrival.get.name)
@@ -220,7 +220,7 @@ class FlightTrackFilter(val config: Config) extends ConfigurableFilter {
     * @return true if the flight arrival transition matches the specification
     *         in the configuration file, otherwise returns false.
     */
-  def matchArrivalTransition(flightTrack: FlightTrack): Boolean = {
+  def matchArrivalTransition(flightTrack: ExtendedFlightState): Boolean = {
     arrivalTransition.isEmpty ||
       flightTrack.fplan.hasArrivalProcedure &&
         arrivalTransition.contains(flightTrack.fplan.arrival.get.transition)

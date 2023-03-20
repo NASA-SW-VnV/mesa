@@ -44,7 +44,7 @@ import gov.nasa.race.uom.Length.NauticalMiles
   * are "visited" by the flight with a lateral deviation specified in the given
   * config (using the key "deviation"). The traces also include StarChange
   * and FlightCompleted events. Note that the STAR assigned to the flight is
-  * obtained on-the-fly from the flight plan captured by FlightTrack
+  * obtained on-the-fly from the flight plan captured by ExtendedFlightState
   * instances.
   */
 class Dynamic_RNAV_STAR_TraceGenerator(val config: Config) extends MesaActor {
@@ -52,50 +52,48 @@ class Dynamic_RNAV_STAR_TraceGenerator(val config: Config) extends MesaActor {
   /** Lateral deviation specified in config. */
   val dev: Length = NauticalMiles(config.getDoubleOrElse("deviation", 1.0))
 
-  /** Receives BusEvent objects representing the message events FlightInfo,
+  /** Receives BusEvent objects representing the messages ExtendedFlightState,
     * StarChanged, FlightCompleted.
     *
-    * For FlightInfo(FlightState, FlightTrack) objects, if the flight position
-    * is within the given radius from one of the STAR's waypoints, it publishes
-    * the event WaypointVisit to the specified channel. For StarChanged and
-    * FlightCompleted, it just publishes the message event on
-    * the channel.
+    * For ExtendedFlightState objects, if the flight position is within the
+    * given radius from one of the STAR's waypoints, it publishes the event
+    * WaypointVisit to the specified channel. For StarChanged and
+    * FlightCompleted, it just publishes the message event on the channel.
     *
     * @return a partial function with the Dynamic_RNAV_STAR_TraceGenerator
     *         actor logic.
     */
   override def handleMessage: Receive = {
-    case BusEvent(_, finfo@FlightInfo(state@FlightState(_, _, _, _, _, _, _, _),
-    ft@FlightTrack(_, _, _, _, _, _)), _) =>
+    case BusEvent(_, state: ExtendedFlightState, _) =>
       // if the star is not rnav, the message is ignored
-      if (Airport.isRnavStar(ft.arrivalPoint,
-        ft.getArrivalProcedure.fold("")(_.name))) {
-        Geo.getWaypointInProximity(state, dev, getWaypointList(ft)) foreach
-          { wp => publish(WaypointVisit(finfo, wp))}
+      if (state.position.isDefined && Airport.isRnavStar(state.arrivalPoint,
+        state.getArrivalProcedure.fold("")(_.name))) {
+        Geo.getWaypointInProximity(state, dev, getWaypointList(state)) foreach
+          { wp => publish(WaypointVisit(state, wp)) }
       }
     case BusEvent(_, msg@StarChanged(_), _) => publish(msg)
     case BusEvent(_, msg@FlightCompleted(_, _), _) => publish(msg)
   }
 
-  /** Obtains the waypoints of the star for the given FlightTrack.
+  /** Obtains the waypoints of the star for the given ExtendedFlightState.
     *
-    * @param ft an object storing the flight track information
-    * @return a list of the waypoints specified in the given FlightTrack arrival
+    * @param state an object storing the flight track information
+    * @return a list of the waypoints specified in the given ExtendedFlightState arrival
     *         procedure.
     */
-  def getWaypointList(ft: FlightTrack): Seq[Waypoint] = {
+  def getWaypointList(state: ExtendedFlightState): Seq[Waypoint] = {
 
-    val star = ft.getArrivalProcedure flatMap {
-      arr => Airport.getRnavStar(ft.arrivalPoint, arr.name)
+    val star = state.getArrivalProcedure flatMap {
+      arr => Airport.getRnavStar(state.arrivalPoint, arr.name)
     }
 
     val wpList = star.fold(Seq.empty[Waypoint]) {
       _.waypoints
     }
 
-    if (wpList.isEmpty && ft.getArrivalProcedure.isDefined)
-      println(s"${Console.MAGENTA}WARNING: ${ft.cs} re-assigned to unknown " +
-        s"STAR ${ft.getArrivalProcedure}")
+    if (wpList.isEmpty && state.getArrivalProcedure.isDefined)
+      println(s"${Console.MAGENTA}WARNING: ${state.cs} re-assigned to unknown " +
+        s"STAR ${state.getArrivalProcedure}")
 
     wpList
   }

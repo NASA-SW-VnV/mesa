@@ -31,16 +31,16 @@
 package gov.nasa.mesa.nextgen.dataProcessing.filters
 
 import com.typesafe.config.Config
-import gov.nasa.mesa.nextgen.core.{FlightState, FlightTrack}
+import gov.nasa.mesa.nextgen.core.{FlightState, ExtendedFlightState}
 import gov.nasa.race.config.ConfigurableFilter
 
 import scala.collection.mutable.HashSet
 
 /** This class represents a filter object used to filter FlightState objects
-  * by mapping them into to the list of received FlightTrack objects. It
+  * by mapping them into to the list of received ExtendedFlightState objects. It
   * maintains a list of flight call signs that their track has been received,
   * and filters out any FlightState whose call sign does not match the call
-  * sign of any FlightTrack object in the list.
+  * sign of any ExtendedFlightState object in the list.
   *
   * @param config the actor configuration
   */
@@ -53,17 +53,17 @@ class FlightStateAndTrackMapFilter(val config: Config)
     * so far.
     *
     * @param o a message
-    * @return true if the message is of type of FlightState and its FlightTrack
+    * @return true if the message is of type of FlightState and its ExtendedFlightState
     *         objects has been received, otherwise, returns false.
     */
   override def pass(o: Any): Boolean = {
     o match {
-      case flightTrack: FlightTrack =>
-        if (csList.add(flightTrack.cs)) {
+      case extendedState: ExtendedFlightState =>
+        if (csList.add(extendedState.cs)) {
         }
         false
-      case flightState: FlightState =>
-        if (csList.contains(flightState.cs)) {
+      case state: FlightState =>
+        if (csList.contains(state.cs)) {
           true
         } else false
       case other => false

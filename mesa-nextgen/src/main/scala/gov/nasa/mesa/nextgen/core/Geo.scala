@@ -71,7 +71,7 @@ object Geo {
     *         which is closest to the flight position, or None if there is no
     *         waypoint within the given proximity.
     */
-  def getWaypointInProximity(state: FlightState, proximity: Length,
+  def getWaypointInProximity(state: ExtendedFlightState, proximity: Length,
                              waypoints: Seq[Waypoint]): Option[Waypoint] = {
 
     var minDev = Meters(Integer.MAX_VALUE)

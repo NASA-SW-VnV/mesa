@@ -31,7 +31,7 @@
 package gov.nasa.mesa.nextgen
 
 import com.typesafe.config.ConfigFactory
-import gov.nasa.mesa.nextgen.core.{FlightPlan, FlightTrack}
+import gov.nasa.mesa.nextgen.core.{FlightPlan, ExtendedFlightState}
 import gov.nasa.mesa.nextgen.dataProcessing.filters.FlightTrackFilter
 import gov.nasa.race.test.RaceActorSpec
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -40,9 +40,9 @@ import org.scalatest.wordspec.AnyWordSpecLike
   * A test suite for gov.nasa.mesa.nextgen.dataProcessing.filters.
   * FlightTrackFilter.
   */
-class FlightTrackFilterSpec extends RaceActorSpec with AnyWordSpecLike {
+class ExtendedFlightStateFilterSpec extends RaceActorSpec with AnyWordSpecLike {
 
-  // FlightTrack definition
+  // ExtendedFlightState definition
   val id = "253"
   val cs = "SWA3651"
   val route = "KBWI.TERPZ6.MAULS.Q40.AEX.WAPPL4.KHOU/0209"
@@ -52,7 +52,7 @@ class FlightTrackFilterSpec extends RaceActorSpec with AnyWordSpecLike {
   val arrival = FlightPlan.getArrivalProcedure(route)
   val flightRules = "IFR"
   val equipmentQualifier = "I"
-  val ti = FlightTrack(id, cs, departureAirport, arrivalAirport,
+  val ti = ExtendedFlightState(id, cs, departureAirport, arrivalAirport,
     new FlightPlan(cs, route, departure, arrival, flightRules),
     equipmentQualifier)
 

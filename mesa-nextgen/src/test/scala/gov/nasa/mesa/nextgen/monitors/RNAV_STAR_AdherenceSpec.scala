@@ -51,7 +51,7 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
       star = "BDEGA3"
       }""")
 
-  // FlightTrack definition
+  // ExtendedFlightState definition
   val id = "253"
   val cs = "SWA3651"
   val route = "KSEA.HAROB6.FEPOT.Q3.FOWND..MLBEC.BDEGA2.KSFO/0055"
@@ -61,25 +61,21 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
   val arrival: Option[Procedure] = FlightPlan.getArrivalProcedure(route)
   val flightRules = "IFR"
   val equipmentQualifier = "I"
-  val ti: FlightTrack = FlightTrack(id, cs, departureAirport, arrivalAirport,
-    new FlightPlan(cs, route, departure, arrival, flightRules),
-    equipmentQualifier)
 
   // FlightState definition
-  val state = new FlightState(id, cs, GeoPosition.undefinedPos,
+  val FlightState: ExtendedFlightState = new ExtendedFlightState(id, cs, GeoPosition.undefinedPos,
     Speed.UndefinedSpeed, Angle.UndefinedAngle, Speed.UndefinedSpeed,
     DateTime.Date0, 0, "?", departureAirport, DateTime.Date0, arrivalAirport,
-    DateTime.Date0)
-
-  val flightInfo: FlightInfo = FlightInfo(state, ti)
+    DateTime.Date0, new FlightPlan(cs, route, departure, arrival, flightRules),
+    equipmentQualifier)
 
   "RNAV_STAR_Adherence" must {
     "report error if the flight does not adhere to the STAR assigned to it" in {
       val monitor = new RNAV_STAR_Adherence(config)
 
-      monitor.verify(WaypointVisit(flightInfo, MLBEC))
-      monitor.verify(WaypointVisit(flightInfo, JONNE))
-      monitor.verify(WaypointVisit(flightInfo, LOZIT))
+      monitor.verify(WaypointVisit(FlightState, MLBEC))
+      monitor.verify(WaypointVisit(FlightState, JONNE))
+      monitor.verify(WaypointVisit(FlightState, LOZIT))
 
       monitor.getErrorCount should be (1)
     }
@@ -89,9 +85,9 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
     "check if the flight adheres to the STAR assigned to it" in {
       val monitor = new RNAV_STAR_Adherence(config)
 
-      monitor.verify(WaypointVisit(flightInfo, MLBEC))
-      monitor.verify(WaypointVisit(flightInfo, JONNE))
-      monitor.verify(WaypointVisit(flightInfo, BGGLO))
+      monitor.verify(WaypointVisit(FlightState, MLBEC))
+      monitor.verify(WaypointVisit(FlightState, JONNE))
+      monitor.verify(WaypointVisit(FlightState, BGGLO))
 
       monitor.getErrorCount should be (0)
     }
@@ -101,10 +97,10 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
     "handle traces with repeated waypoints" in {
       val monitor = new RNAV_STAR_Adherence(config)
 
-      monitor.verify(WaypointVisit(flightInfo, MLBEC))
-      monitor.verify(WaypointVisit(flightInfo, JONNE))
-      monitor.verify(WaypointVisit(flightInfo, JONNE))
-      monitor.verify(WaypointVisit(flightInfo, BGGLO))
+      monitor.verify(WaypointVisit(FlightState, MLBEC))
+      monitor.verify(WaypointVisit(FlightState, JONNE))
+      monitor.verify(WaypointVisit(FlightState, JONNE))
+      monitor.verify(WaypointVisit(FlightState, BGGLO))
 
       monitor.getErrorCount should be(0)
     }
@@ -114,15 +110,15 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
     "stop monitoring the flight after it reaches the final waypoint" in {
       val monitor = new RNAV_STAR_Adherence(config)
 
-      monitor.verify(WaypointVisit(flightInfo, MLBEC))
-      monitor.verify(WaypointVisit(flightInfo, JONNE))
-      monitor.verify(WaypointVisit(flightInfo, BGGLO))
-      monitor.verify(WaypointVisit(flightInfo, LOZIT))
-      monitor.verify(WaypointVisit(flightInfo, BDEGA))
-      monitor.verify(WaypointVisit(flightInfo, CORKK))
-      monitor.verify(WaypointVisit(flightInfo, BRIXX))
+      monitor.verify(WaypointVisit(FlightState, MLBEC))
+      monitor.verify(WaypointVisit(FlightState, JONNE))
+      monitor.verify(WaypointVisit(FlightState, BGGLO))
+      monitor.verify(WaypointVisit(FlightState, LOZIT))
+      monitor.verify(WaypointVisit(FlightState, BDEGA))
+      monitor.verify(WaypointVisit(FlightState, CORKK))
+      monitor.verify(WaypointVisit(FlightState, BRIXX))
       // since BRIXX is the final waypoint, it should stop monitoring here
-      monitor.verify(WaypointVisit(flightInfo, Waypoint.NoWaypoint))
+      monitor.verify(WaypointVisit(FlightState, Waypoint.NoWaypoint))
 
       monitor.getErrorCount should be(0)
     }
@@ -133,9 +129,9 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
       "initial waypoint" in {
       val monitor = new RNAV_STAR_Adherence(config)
 
-      monitor.verify(WaypointVisit(flightInfo, BDEGA))
-      monitor.verify(WaypointVisit(flightInfo, CORKK))
-      monitor.verify(WaypointVisit(flightInfo, BRIXX))
+      monitor.verify(WaypointVisit(FlightState, BDEGA))
+      monitor.verify(WaypointVisit(FlightState, CORKK))
+      monitor.verify(WaypointVisit(FlightState, BRIXX))
 
       monitor.getErrorCount should be(1)
     }

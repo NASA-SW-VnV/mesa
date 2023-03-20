@@ -30,8 +30,7 @@
   */
 package gov.nasa.mesa.nextgen.dataProcessing.translators
 
-import gov.nasa.mesa.nextgen.core.{FlightPlan, FlightState,
-  FlightStateCompleted, FlightTrack}
+import gov.nasa.mesa.nextgen.core.{ExtendedFlightState, ExtendedSfdpsTrack, FlightPlan, FlightState, FlightStateCompleted}
 import gov.nasa.race.air.SfdpsTrack
 import gov.nasa.race.common._
 import gov.nasa.race.geo.GeoPosition
@@ -92,11 +91,11 @@ class Sfdps2FlightStateTranslator extends SfdpsParser {
 }
 
 /** This class represents a translator that translates SFDPS MessageCollection
-  * messages obtained from SWIM to FlightTrack events.
+  * messages obtained from SWIM to ExtendedFlightState events.
   */
 class Sfdps2FlightTrackTranslator extends SfdpsParser {
 
-  /** Creates an instance of a FlightTrack object.
+  /** Creates an instance of a ExtendedFlightState object.
     *
     * @param id  the flight id
     * @param cs  the flight call sign
@@ -117,7 +116,7 @@ class Sfdps2FlightTrackTranslator extends SfdpsParser {
     * @param route the route
     * @param flightRules flight rules
     * @param equipmentQualifier the equipment qualifier
-    * @return an instance of a FlightTrack object.
+    * @return an instance of a ExtendedFlightState object.
     */
   override def createSfdpsObject(id: String, cs: String, lat: Double,
                                  lon: Double, vx: Double, vy: Double,
@@ -127,27 +126,31 @@ class Sfdps2FlightTrackTranslator extends SfdpsParser {
                                  departureDate: DateTime, status: Int,
                                  src: String, route: String, flightRules: String,
                                  equipmentQualifier: String): SfdpsTrack = {
-    if (route != "?") {
-      val departureProcedure = FlightPlan.getDepartureProcedure(route)
-      val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
-      val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
+    if ((status & TrackedObject.CompletedFlag) != 0) {
+      FlightStateCompleted(id, cs, GeoPosition(Degrees(lat), Degrees(lon), alt),
+        spd, Degrees(Math.atan2(vx, vy).toDegrees), vr, date, status, src,
+        departurePoint, departureDate, arrivalPoint, arrivalDate)
+    } else {
+        val departureProcedure = FlightPlan.getDepartureProcedure(route)
+        val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
+        val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
 
-      FlightTrack(id, cs, GeoPosition(Degrees(lat),Degrees(lon),alt), spd,
-        Degrees(Math.atan2(vx, vy).toDegrees), vr, date, status, src,
-        departurePoint, departureDate, arrivalPoint, arrivalDate, plan,
-        equipmentQualifier)
-    } else null
+        ExtendedFlightState(id, cs, GeoPosition(Degrees(lat), Degrees(lon), alt), spd,
+          Degrees(Math.atan2(vx, vy).toDegrees), vr, date, status, src,
+          departurePoint, departureDate, arrivalPoint, arrivalDate, plan,
+          equipmentQualifier)
+    }
   }
 }
 
 /** This class represents a translator that translates SFDPS MessageCollection
   * messages obtained from SWIM to the NextGen event objects of types
-  * FlightState, FlightStateCompleted, and FlightTrack.
+  * FlightState, FlightStateCompleted, and ExtendedFlightState.
   */
 class SfdpsFullTranslator extends SfdpsParser {
 
   /** Creates an instance of a FlightState, FlightStateCompleted, or
-    * FlightTrack object.
+    * ExtendedFlightState object.
     *
     * @param id  the flight id
     * @param cs  the flight call sign
@@ -169,7 +172,7 @@ class SfdpsFullTranslator extends SfdpsParser {
     * @param flightRules flight rules
     * @param equipmentQualifier the equipment qualifier
     * @return an instance of a a FlightState, FlightStateCompleted, or
-    *         FlightTrack object.
+    *         ExtendedFlightState object.
     */
   override def createSfdpsObject(id: String, cs: String, lat: Double,
                                  lon: Double, vx: Double, vy: Double,
@@ -194,7 +197,7 @@ class SfdpsFullTranslator extends SfdpsParser {
         val departureProcedure = FlightPlan.getDepartureProcedure(route)
         val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
         val plan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
-        FlightTrack(id, cs, GeoPosition(Degrees(lat),Degrees(lon),alt), spd,
+        ExtendedFlightState(id, cs, GeoPosition(Degrees(lat),Degrees(lon),alt), spd,
           Degrees(Math.atan2(vx, vy).toDegrees), vr, date, status, src,
           departurePoint, departureDate, arrivalPoint, arrivalDate, plan,
           equipmentQualifier)
@@ -203,3 +206,4 @@ class SfdpsFullTranslator extends SfdpsParser {
     }
   }
 }
+

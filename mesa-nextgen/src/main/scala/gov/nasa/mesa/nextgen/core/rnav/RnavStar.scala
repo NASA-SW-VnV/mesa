@@ -30,7 +30,7 @@
   */
 package gov.nasa.mesa.nextgen.core.rnav
 
-import gov.nasa.mesa.nextgen.core.{FlightState, Geo, Waypoint}
+import gov.nasa.mesa.nextgen.core.{FlightState, ExtendedFlightState, Geo, Waypoint}
 import gov.nasa.race.uom.Length
 
 import scala.collection.immutable.HashMap
@@ -73,7 +73,7 @@ case class RnavStar(name: String, graph: StarGraph) {
     *         the given proximity, or None if there is not any waypoints in
     *         the specified proximity.
     */
-  def getWaypointInProximity(state: FlightState, proximity: Length)
+  def getWaypointInProximity(state: ExtendedFlightState, proximity: Length)
   : Option[Waypoint] =
     Geo.getWaypointInProximity(state, proximity, waypoints)
 

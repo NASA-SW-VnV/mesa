@@ -38,10 +38,10 @@ import gov.nasa.race.core.BusEvent
 
 import scala.collection.immutable.HashMap
 
-/** This class represents a MESA actor used to filter out input data
-  * including FlightState and FlightTracks. It received a trace
-  * including FlightState and FlightTrack objects and publishes
-  * FlightInfo(FlightState, FlightTrack).
+/** This class represents a MESA actor used to filter out flight state objects
+  * including ExtendedFlightState and FlightStateCompleted. It received a trace
+  * including these objects and publishes ExtendedFlightState and FlightCompleted
+  * objects.
   *
   * It includes a built-in filter of type FlightTrackFilter which filters out
   * data based on the given track information specified in the actor
@@ -49,51 +49,56 @@ import scala.collection.immutable.HashMap
   *
   * @param config the actor configuration
   */
-class FilteredFlightInfoGenerator(val config: Config) extends MesaActor {
+class FilteredFlightStateGenerator(val config: Config) extends MesaActor {
 
-  var tiList = HashMap.empty[String, FlightTrack]
+  var tiList = HashMap.empty[String, ExtendedFlightState]
 
   val flightTrackFilter: ConfigurableFilter = new FlightTrackFilter(config)
 
   /** This defines the actor behavior specified as a partial function with the
-    * FilteredFlightInfoGenerator actor logic.
+    * FilteredFlightStateGenerator actor logic.
     *
-    * @return a partial function with the FilteredFlightInfoGenerator actor
+    * @return a partial function with the FilteredFlightStateGenerator actor
     *         logic.
     */
   override def handleMessage: Receive = {
-    case BusEvent(_, ft@FlightTrack(_, cs, _, _, _, _), _) =>
+    case BusEvent(_, state@ExtendedFlightState(_, cs, _, _, _, _, _, _, _, _, _, _), _) =>
       val tInfo = tiList.get(cs)
       if (tInfo.isEmpty) {
-        if (flightTrackFilter.pass(ft))
-        // started monitoring cs
-        tiList += (cs -> ft)
-      }
-      else {
+        if (state.hasflightPlan && flightTrackFilter.pass(state)) {
+          // started monitoring cs
+          tiList += (cs -> state)
+          publish(state)
+        }
+      } else if(state.hasflightPlan) {
         // check to see if the arrival procedure has changed
         val arr1 = tInfo.get.getArrivalProcedure.getOrElse(None)
-        val arr2 = ft.getArrivalProcedure.getOrElse(None)
+        val arr2 = state.getArrivalProcedure.getOrElse(None)
         if (!arr1.equals(arr2)) {
           println(s"${Console.YELLOW}$cs STAR CHANGED: ${arr1} -> " +
             s"${arr2}${Console.RESET}")
-          publish(StarChanged(ft))
-        }
+          publish(StarChanged(state))
 
-        if (flightTrackFilter.pass(ft))
-        // updating
-        tiList += (cs -> ft)
-          else
-          println(s"${Console.MAGENTA}WARNING: new $cs STAR is out of scope:" +
-            s"\n ${tInfo.get.fplan.route} -> ${ft.fplan.route}${Console.RESET}")
+          if (flightTrackFilter.pass(state)) {
+            // updating
+            tiList += (cs -> state)
+            publish(state)
+          } else {
+            println(s"${Console.MAGENTA}WARNING: new $cs STAR is out of scope:" +
+              s"\n ${tInfo.get.fplan.route} -> ${state.fplan.route}${Console.RESET}")
+            // updating
+            tiList -= cs
+          }
+        } else {
+          publish(state)
+        }
+      } else { // !tInfo.isEmpty && !ft.hasflightPlan
+        // as long as the last recorded flight plan is in the list, we still publish
+        publish(ExtendedFlightState(state.id, state.cs, state.position, state.speed, state.heading, state.vr, state.date, state.status, state.src,
+          state.departurePoint, state.departureDate, state.arrivalPoint, state.arrivalDate, tInfo.get.fplan,
+          state.equipmentQualifier))
       }
-    case BusEvent(_, state@FlightState(_, cs, _, _, _, _, _, _), _) => {
-      if (tiList.contains(cs)) {
-        val ti = tiList.get(state.cs).get
-        val obj = FlightInfo(state, ti)
-        publish(obj)
-      }
-    }
-    case BusEvent(_, e@FlightStateCompleted(_, cs, _, _, _, _, _, _), _) =>
+    case BusEvent(_, FlightStateCompleted(_, cs, _, _, _, _, _, _), _) =>
       if (tiList.contains(cs)) {
         // remove the flight from the list
         val ft = tiList.get(cs)

@@ -32,7 +32,7 @@ package gov.nasa.mesa.nextgen
 
 import java.io.File
 
-import gov.nasa.mesa.nextgen.core.{FlightState, FlightTrack}
+import gov.nasa.mesa.nextgen.core.{FlightState, ExtendedFlightState}
 import gov.nasa.mesa.nextgen.dataProcessing.translators
 .{Sfdps2FlightStateTranslator, Sfdps2FlightTrackTranslator, SfdpsFullTranslator}
 import gov.nasa.race.air.TrackedAircraft
@@ -46,10 +46,10 @@ import scala.collection.mutable.ArrayBuffer
   * A test suite for gov.nasa.mesa.nextgen.dataProcessing.translators
   * .SfdpsParser.
   */
-class SfdpsFlightTrackParserSpec extends RaceActorSpec with AnyWordSpecLike {
+class SfdpsExtendedFlightStateParserSpec extends RaceActorSpec with AnyWordSpecLike {
 
   "SfdpsFullTranslator translator" must {
-    "generate FlightTrack and FlightState objects from MessageCollection" in {
+    "generate ExtendedFlightState and FlightState objects from MessageCollection" in {
       val path = getClass.getProtectionDomain.getCodeSource.getLocation.getPath
       val xmlMsg = fileContentsAsUTF8String(new File(path, "fixm.xml")).get
 
@@ -64,7 +64,7 @@ class SfdpsFlightTrackParserSpec extends RaceActorSpec with AnyWordSpecLike {
           println(it)
           assert(it.size == numFlightMsg)
         case _ =>
-          fail(s"failed to generate FlightTrack objects from FIXM messages " +
+          fail(s"failed to generate ExtendedFlightState objects from FIXM messages " +
             s"- result: $None")
       }
     }
@@ -72,13 +72,13 @@ class SfdpsFlightTrackParserSpec extends RaceActorSpec with AnyWordSpecLike {
 
   "Sfdps2FlightTrackTranslator parser" must {
     "retrieve the correct values for the cooresponding fields of " +
-      "FlightTrack" in {
+      "ExtendedFlightState" in {
       val path = getClass.getProtectionDomain.getCodeSource.getLocation.getPath
       val xmlMsg = fileContentsAsUTF8String(new File(path, "fixm.xml")).get
 
       val translator = new Sfdps2FlightTrackTranslator
       val flightTrack = translator.translate(xmlMsg).get.
-        asInstanceOf[ArrayBuffer[FlightTrack]](0)
+        asInstanceOf[ArrayBuffer[ExtendedFlightState]](0)
 
       val id = "253"
       val cs = "SWA3651"

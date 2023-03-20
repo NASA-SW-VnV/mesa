@@ -73,6 +73,8 @@ case class FlightPlan(val cs: String,
     *         otherwise, returns false
     */
   def hasDepartureProcedure: Boolean = departure.isDefined
+
+  def hasFlightPlan: Boolean = route != "?"
 }
 
 object FlightPlan {

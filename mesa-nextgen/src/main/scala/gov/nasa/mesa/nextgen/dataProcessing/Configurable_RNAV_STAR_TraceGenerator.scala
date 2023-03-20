@@ -69,7 +69,7 @@ class Configurable_RNAV_STAR_TraceGenerator(val config: Config)
     *         actor logic.
     */
   override def handleMessage: Receive = {
-    case BusEvent(_, state@FlightState(_, _, _, _, _, _, _, _), _) =>
+    case BusEvent(_, state: ExtendedFlightState, _) =>
       val proximityWaypoint = Geo.getWaypointInProximity(state, dev,
         waypointList)
       if (proximityWaypoint.isDefined) publish((state, proximityWaypoint.get))

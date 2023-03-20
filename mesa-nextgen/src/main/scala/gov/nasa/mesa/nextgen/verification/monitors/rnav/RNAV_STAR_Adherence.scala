@@ -96,11 +96,10 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
     * @param msg a message
     */
   override def verifyBeforeEvent(msg: Any): Unit = msg match {
-    case WaypointVisit(FlightInfo(state: FlightState, ti: FlightTrack),
-    wp: Waypoint) =>
-      if (!isCompleted(state.cs) && rnavStar.has(wp))
-        println(s"** ${state.cs} at ${wp.id}")
-    case StarChanged(ft: FlightTrack) => // ignore
+    case WaypointVisit(ft: ExtendedFlightState, wp: Waypoint) =>
+      if (!isCompleted(ft.cs) && rnavStar.has(wp))
+        println(s"** ${ft.cs} at ${wp.id}")
+    case StarChanged(ft: ExtendedFlightState) => // ignore
     case FlightCompleted(_, _) => // ignore
 
   }
@@ -136,13 +135,13 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
   /** Checks if the flight is transitioning into the arrival procedure at the
     * assigned initial waypoint.
     *
-    * @param ft an object including the flight track information
+    * @param state an object including the flight state information
     * @param wp a waypoint at which the flight transitioned into the procedure
     * @return true if wp is the initial point in the assigned arrival procedure.
     */
-  def atInitialTransition(ft: FlightTrack, wp: Waypoint): Boolean = {
-    if (ft.fplan.hasArrivalProcedure)
-      ft.getArrivalProcedure.get.transition.equals(wp.id)
+  def atInitialTransition(state: ExtendedFlightState, wp: Waypoint): Boolean = {
+    if (state.fplan.hasArrivalProcedure)
+      state.getArrivalProcedure.get.transition.equals(wp.id)
     else
       false
   }
@@ -161,19 +160,19 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
   /** Generates an error message indicating the flight did not adhere to the
     * assigned RNAV STAR procedure.
     *
-    * @param ft an object including the flight track information
+    * @param state an object including the flight state information
     * @param curr the current waypoint
     * @param error the waypoint at which the error occurred, that is, the
     *              waypoint from which the flight deviated
     * @return an error message
     */
-  def generateErrorMsg(ft: FlightTrack, curr: Waypoint, error: Waypoint)
+  def generateErrorMsg(state: ExtendedFlightState, curr: Waypoint, error: Waypoint)
   : String = {
-    extendTrace(ft.cs, error)
+    extendTrace(state.cs, error)
 
-    s"${Console.RED}ERROR: ${ft.cs} didn't adhere to " +
-      s"${ft.getArrivalProcedure.get}\n      " +
-      s"${csMap(ft.cs)}${Console.RESET}"
+    s"${Console.RED}ERROR: ${state.cs} didn't adhere to " +
+      s"${state.getArrivalProcedure.get}\n      " +
+      s"${csMap(state.cs)}${Console.RESET}"
   }
 
   /** Verifies if the given event 'e' is a relevant event.
@@ -189,11 +188,11 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
     *         return false.
     */
   def isDefined(e: WaypointVisit): Boolean = {
-    val flightTrack = e.flightInfo.flightTrack
+    val state = e.flightState
     val wp = e.waypoint
-    val init = rnavStar.getWaypoint(flightTrack.getArrivalProcedure.get
+    val init = rnavStar.getWaypoint(state.getArrivalProcedure.get
       .transition).getOrElse(Waypoint.NoWaypoint)
-    !monitored(flightTrack.cs) && rnavStar.has(wp) &&
+    !monitored(state.cs) && rnavStar.has(wp) &&
       rnavStar.belongsToRoute(init, wp)
   }
 
@@ -215,19 +214,19 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
     * STAR Adherence property.
     */
   always {
-    case e@WaypointVisit(fi@FlightInfo(_, ft: FlightTrack), wp: Waypoint)
+    case e@WaypointVisit(state: ExtendedFlightState, wp: Waypoint)
       // Checks if the event is relevant and if a new finite state machine
       // should be generated for the flight.
       if (isDefined(e)) =>
-      monitor(ft.cs)
-      if (atInitialTransition(ft, wp)) {
-        println(s"${Console.UNDERLINED}Started Monitoring: ${ft.cs}   " +
-          s"STAR: ${ft.getArrivalProcedure.get}${Console.RESET}")
-        nextState(wp, ft.cs)
+      monitor(state.cs)
+      if (atInitialTransition(state, wp)) {
+        println(s"${Console.UNDERLINED}Started Monitoring: ${state.cs}   " +
+          s"STAR: ${state.getArrivalProcedure.get}${Console.RESET}")
+        nextState(wp, state.cs)
       }
       else {
-        errorState(s"${Console.MAGENTA}ERROR: ${ft.cs} is transitioning to " +
-          s"${ft.getArrivalProcedure.get} at " + s"${wp.id}${Console.RESET}")
+        errorState(s"${Console.MAGENTA}ERROR: ${state.cs} is transitioning to " +
+          s"${state.getArrivalProcedure.get} at " + s"${wp.id}${Console.RESET}")
       }
     // Checks if the event is relevant
     case e@FlightCompleted(cs, star)
@@ -249,19 +248,16 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
     val next = rnavStar.getNextWaypoint(wp)
     watch {
       // flight visits the current waypoint and stays in the same sate
-      case WaypointVisit(FlightInfo(FlightState(_, `cs`, _, _, _, _, _, _), _),
-      `wp`) =>
+      case WaypointVisit(ExtendedFlightState(_, `cs`, _, _, _, _, _, _, _, _, _, _), `wp`) =>
         nextState(wp, cs)
       // flight visit the next waypoint in the procedure
-      case WaypointVisit(FlightInfo(FlightState(_, `cs`, _, _, _, _, _, _),
-      ft: FlightTrack), `next`) =>
+      case WaypointVisit(ft@ExtendedFlightState(_, `cs`, _, _, _, _, _, _, _, _, _, _), `next`) =>
         // if it's a final waypoint it moves to the accept state
         if (next == finalWaypoint) acceptState(finalWaypoint, ft)
         else nextState(next, cs)
       // if it visits any waypoints other than the current and the next one it
       // moves to the error state
-      case WaypointVisit(FlightInfo(FlightState(_, `cs`, _, _, _, _, _, _),
-      ft: FlightTrack), w: Waypoint) =>
+      case WaypointVisit(ft@ExtendedFlightState(_, `cs`, _, _, _, _, _, _, _, _, _, _), w: Waypoint) =>
         errorState(generateErrorMsg(ft, w, wp))
       // if we get here, it means that the flight is completed without visiting
       // the final waypoint, therefore an error is issued
@@ -271,7 +267,7 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
           s"$star ${Console.RESET}")
       // if the flight is assigned to different procedure we need to drop the
       // analysis
-      case StarChanged(ti@FlightTrack(_, `cs`, _, _, _, _)) => dropState(cs)
+      case StarChanged(ExtendedFlightState(_, `cs`, _, _, _, _, _, _, _, _, _, _)) => dropState(cs)
     }
   }
 
@@ -290,7 +286,7 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
     * @param ti an object storing the flight track info
     * @return the state 'ok' representing the accept state.
     */
-  def acceptState(wp: Waypoint, ti: FlightTrack): state = {
+  def acceptState(wp: Waypoint, ti: ExtendedFlightState): state = {
     extendTrace(ti.cs, wp)
     println(s"${Console.GREEN}SUCCESS: ${ti.cs} adhered to " +
       s"${ti.getArrivalProcedure.get}\n ${csMap(ti.cs)} " +

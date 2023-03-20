@@ -56,7 +56,6 @@ class DisplayActor(val config: Config) extends MesaActor {
     * @param msg the message to be displayed
     */
   def display(channel: String, msg: Any): Unit = {
-
     println(s"On channel: $channel --- $msg")
   }
 }
