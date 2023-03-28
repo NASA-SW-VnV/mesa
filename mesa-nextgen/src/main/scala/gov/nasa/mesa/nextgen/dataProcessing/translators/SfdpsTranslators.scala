@@ -93,7 +93,7 @@ class Sfdps2FlightStateTranslator extends SfdpsParser {
 /** This class represents a translator that translates SFDPS MessageCollection
   * messages obtained from SWIM to ExtendedFlightState events.
   */
-class Sfdps2FlightTrackTranslator extends SfdpsParser {
+class Sfdps2ExtendedFlightStateTranslator extends SfdpsParser {
 
   /** Creates an instance of a ExtendedFlightState object.
     *

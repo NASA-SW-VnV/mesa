@@ -34,7 +34,7 @@ import java.io.File
 
 import gov.nasa.mesa.nextgen.core.{FlightState, ExtendedFlightState}
 import gov.nasa.mesa.nextgen.dataProcessing.translators
-.{Sfdps2FlightStateTranslator, Sfdps2FlightTrackTranslator, SfdpsFullTranslator}
+.{Sfdps2FlightStateTranslator, Sfdps2ExtendedFlightStateTranslator, SfdpsFullTranslator}
 import gov.nasa.race.air.TrackedAircraft
 import gov.nasa.race.test.RaceActorSpec
 import gov.nasa.race.util.FileUtils.fileContentsAsUTF8String
@@ -70,13 +70,13 @@ class SfdpsExtendedFlightStateParserSpec extends RaceActorSpec with AnyWordSpecL
     }
   }
 
-  "Sfdps2FlightTrackTranslator parser" must {
+  "Sfdps2ExtendedFlightStateTranslator parser" must {
     "retrieve the correct values for the cooresponding fields of " +
       "ExtendedFlightState" in {
       val path = getClass.getProtectionDomain.getCodeSource.getLocation.getPath
       val xmlMsg = fileContentsAsUTF8String(new File(path, "fixm.xml")).get
 
-      val translator = new Sfdps2FlightTrackTranslator
+      val translator = new Sfdps2ExtendedFlightStateTranslator
       val flightTrack = translator.translate(xmlMsg).get.
         asInstanceOf[ArrayBuffer[ExtendedFlightState]](0)
 

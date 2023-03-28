@@ -41,12 +41,16 @@ import gov.nasa.race.uom.DateTime
 
 import scala.language.postfixOps
 
-/** This class is a modified version of gov.nasa.race.actor.ReplayActor. It is
-  * an actor that reads ArchiveEntry objects from an archive with a path
-  * specified in the given config ("reader.pathname"), and writes them in
-  * a channel specified in the given config ("write-to"). Unlike ReplayActor
-  * in RACE, this class ignores the ArchiveEntry object time-stamps, and replays
-  * messages as it reads them.
+/** This class represents an actor which is replays ArchiveEntry objects
+  * from a givien archive. It reads ArchiveEntry objects from an archive
+  * with a path specified in the given config ("reader.pathname"), and writes
+  * them in a channel specified in the given config ("write-to"). Unlike
+  * ReplayActor in RACE, this class ignores the ArchiveEntry object time-stamps,
+  * and replays messages as it reads them.
+  *
+  * One could introduce delay between processing messages by setting delay-millis
+  * in config. Using ReplayActor or TimedReplayActor is encouraged in this case,
+  * since the delay relies on Thread.sleep().
   *
   * @param config the actor configuration
   */
@@ -63,7 +67,7 @@ class InstantReplayActor(override val config: Config) extends
   case class Replay(msg: Any)
 
   val counterThreshold: Int = config.getIntOrElse("break-after", 20)
-  val delayMillis: Int = config.getIntOrElse("delay-millis", 0)
+  val delayMillis: Long = config.getLongOrElse("delay-millis", 0)
 
   val reader: ArchiveReader = createReader
   var noMoreData: Boolean = !reader.hasMoreArchivedData
@@ -150,7 +154,7 @@ class InstantReplayActor(override val config: Config) extends
     * replayed by handleReplayMessage.
     */
   def scheduleNext: Unit = {
-    Thread.sleep(delayMillis)
+    pause
     if (!noMoreData) {
       reader.readNextEntry match {
         case Some(e) =>
@@ -162,6 +166,10 @@ class InstantReplayActor(override val config: Config) extends
         case None => reachedEndOfArchive
       }
     }
+  }
+
+  def pause : Unit = {
+    Thread.sleep(delayMillis)
   }
 
   /** Used when the actor reaches the end of the archive. It closes the reader

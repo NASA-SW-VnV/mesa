@@ -51,7 +51,7 @@ import scala.collection.immutable.HashMap
   */
 class FilteredFlightStateGenerator(val config: Config) extends MesaActor {
 
-  var tiList = HashMap.empty[String, ExtendedFlightState]
+  var qualifiedStates = HashMap.empty[String, ExtendedFlightState]
 
   val flightTrackFilter: ConfigurableFilter = new FlightTrackFilter(config)
 
@@ -63,16 +63,16 @@ class FilteredFlightStateGenerator(val config: Config) extends MesaActor {
     */
   override def handleMessage: Receive = {
     case BusEvent(_, state@ExtendedFlightState(_, cs, _, _, _, _, _, _, _, _, _, _), _) =>
-      val tInfo = tiList.get(cs)
-      if (tInfo.isEmpty) {
-        if (state.hasflightPlan && flightTrackFilter.pass(state)) {
+      val fstate = qualifiedStates.get(cs)
+      if (fstate.isEmpty) {
+        if (flightTrackFilter.pass(state)) {
           // started monitoring cs
-          tiList += (cs -> state)
+          qualifiedStates += (cs -> state)
           publish(state)
         }
       } else if(state.hasflightPlan) {
         // check to see if the arrival procedure has changed
-        val arr1 = tInfo.get.getArrivalProcedure.getOrElse(None)
+        val arr1 = fstate.get.getArrivalProcedure.getOrElse(None)
         val arr2 = state.getArrivalProcedure.getOrElse(None)
         if (!arr1.equals(arr2)) {
           println(s"${Console.YELLOW}$cs STAR CHANGED: ${arr1} -> " +
@@ -81,13 +81,13 @@ class FilteredFlightStateGenerator(val config: Config) extends MesaActor {
 
           if (flightTrackFilter.pass(state)) {
             // updating
-            tiList += (cs -> state)
+            qualifiedStates += (cs -> state)
             publish(state)
           } else {
             println(s"${Console.MAGENTA}WARNING: new $cs STAR is out of scope:" +
-              s"\n ${tInfo.get.fplan.route} -> ${state.fplan.route}${Console.RESET}")
+              s"\n ${fstate.get.fplan.route} -> ${state.fplan.route}${Console.RESET}")
             // updating
-            tiList -= cs
+            qualifiedStates -= cs
           }
         } else {
           publish(state)
@@ -95,16 +95,16 @@ class FilteredFlightStateGenerator(val config: Config) extends MesaActor {
       } else { // !tInfo.isEmpty && !ft.hasflightPlan
         // as long as the last recorded flight plan is in the list, we still publish
         publish(ExtendedFlightState(state.id, state.cs, state.position, state.speed, state.heading, state.vr, state.date, state.status, state.src,
-          state.departurePoint, state.departureDate, state.arrivalPoint, state.arrivalDate, tInfo.get.fplan,
+          state.departurePoint, state.departureDate, state.arrivalPoint, state.arrivalDate, fstate.get.fplan,
           state.equipmentQualifier))
       }
     case BusEvent(_, FlightStateCompleted(_, cs, _, _, _, _, _, _), _) =>
-      if (tiList.contains(cs)) {
+      if (qualifiedStates.contains(cs)) {
         // remove the flight from the list
-        val ft = tiList.get(cs)
-        tiList -= cs
+        val fstate = qualifiedStates.get(cs)
+        qualifiedStates -= cs
         publish(FlightCompleted(cs,
-          ft.get.getArrivalProcedure.getOrElse(Procedure.NotAssigned)))
+          fstate.get.getArrivalProcedure.getOrElse(Procedure.NotAssigned)))
       }
   }
 }

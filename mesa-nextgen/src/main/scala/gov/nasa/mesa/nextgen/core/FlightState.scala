@@ -38,7 +38,7 @@ import gov.nasa.race.uom._
 
 /** Captures the state of an operating flight.
   *
-  * @param id the flight identifier //changes over the course of the flight
+  * @param id the flight identifier, which could change over the course of the flight
   * @param cs the flight call sign
   * @param position the flight position
   * @param speed the flight speed
