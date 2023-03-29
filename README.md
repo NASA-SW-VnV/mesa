@@ -9,15 +9,20 @@ Further information about MESA and the installation guide can be found in the fi
 ### Contact
 
 For questions and further information on MESA, please contact [Nastaran 
-Shafiei](https://ti.arc.nasa.gov/profile/nshafiei/) at <nasatarn.shafiei@nasa.gov>.
+Shafiei](https://ti.arc.nasa.gov/profile/nshafiei/) at <nastaran.shafiei@nasa.gov>.
 
 ### Publications
-- [Actor-based Runtime Verification with MESA](https://link.springer.com/chapter/10.1007%2F978-3-030-60508-7_12). 
-Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz.
+- ***Concurrent Runtime Verification of Data Rich Events ([pdf](papers/sttt-mesa-2023.pdf))***.
+  *Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz*.
+  International Journal on Software Tools for Technology Transfer (STTT), Springer-Verlag. 2023 - to appear. Journal version of RV 2020 paper.
+
+- ***[Actor-based Runtime Verification with MESA](https://link.springer.com/chapter/10.1007%2F978-3-030-60508-7_12) ([pdf](papers/mesa-rv-2020.pdf))***. 
+  *Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz*.
 In: Jyotirmoy Deshmukh and Dejan Nickovic (eds) Runtime Verification. RV 2020. Lecture Notes in Computer Science, vol 12399. Springer, Cham.
 
-- [Empirical Study of Actor-based Runtime Verification](https://ti.arc.nasa.gov/publications/20205004231/download/). Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz. 
-NASA Technial Report: NASA/TM–20205004231.
+- ***[Empirical Study of Actor-based Runtime Verification](https://ntrs.nasa.gov/) ([pdf](papers/mesa-nasa-report-2020.pdf))***. 
+  *Nastaran Shafiei, Klaus Havelund, and Peter Mehlitz*.
+  NASA Technical Report: NASA/TM-2020-5004331. June 2020.
 
 ### License
 
