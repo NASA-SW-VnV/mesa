@@ -45,8 +45,8 @@ class FlightMsgOrder_Monitor(config: Config) extends TraceContractMonitor(config
   property('flight_seq_order) {
     always {
       case FlightState(_, cs, _, _, _, _, date1, _) => state {
-        case FlightState(_, `cs`, _, _, _, _, date2, _)=> {
-          date2.isAfter(date1)
+        case FlightState(_, `cs`, _, _, _, _, date2, _) => {
+          !date2.isBefore(date1)
         }
       }
     }
