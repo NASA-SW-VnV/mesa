@@ -163,9 +163,11 @@ class ExtendedSfdpsTrackArchiveWriter (val oStream: OutputStream, val pathName: 
   * @param iStream an input stream where it reads the ExtendedSfdpsTrack files from
   * @param pathName a path for the archive where this class reads from
   */
-class FlightStateArchiveReader (val iStream: InputStream, val pathName: String="<unknown>")
+class FlightStateArchiveReader (val iStream: InputStream, val pathName: String="<unknown>",
+                                val excludeInvalidDates: Boolean = false)
   extends ArchiveReader with InputStreamLineTokenizer {
-  def this(conf: Config) = this(createInputStream(conf), configuredPathName(conf))
+  def this(conf: Config) = this(createInputStream(conf), configuredPathName(conf),
+    conf.getBooleanOrElse("excludeInvalidDates", false))
 
   def hasMoreArchivedData = iStream.available > 0
   def close(): Unit = iStream.close
@@ -208,7 +210,9 @@ class FlightStateArchiveReader (val iStream: InputStream, val pathName: String="
         val arrivalProcedure = FlightPlan.getArrivalProcedure(route)
         val flightPlan = new FlightPlan(cs, route, departureProcedure, arrivalProcedure, flightRules)
 
-        if((status & TrackedObject.CompletedFlag)!=0)
+        if(excludeInvalidDates && date.isUndefined)
+          readNextEntry
+        else if((status & TrackedObject.CompletedFlag)!=0)
           archiveEntry(DateTime.ofEpochMillis(recDt), new FlightStateCompleted(id, cs, GeoPosition(Degrees(phi), Degrees(lambda), Feet(alt)),
             UsMilesPerHour(speed), Degrees(heading), FeetPerMinute(vr), date, status, src, departurePoint, departureDate,
             arrivalPoint, arrivalDate))
