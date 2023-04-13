@@ -46,6 +46,7 @@ import gov.nasa.race.uom.DateTime
   * To use this functionality one needs to invoke the methods below to update
   * counters from appropriate points in the application specific
   * monitor/dispatcher actors:
+  *
   * incErrorCounter()
   * incDispatchedMsgCount()
   * incMonitorCounter() // when a monitor is
@@ -88,12 +89,14 @@ object GlobalStatsProfiler {
   var csvFilePrinter: Option[GlobalProfilerCSVPrinter] =
     None: Option[GlobalProfilerCSVPrinter]
 
+  var activated = false
   /** Initializes the GlobalStatsProfiler object.
     *
     * @param config the actor system configuration
     * @param action a partial function representing the termination action
     */
   def initialize(config: Config, action: () => Unit): Unit = {
+    activated = config.hasPath("global-profiler")
     maxMsgCount = config.getIntOrElse("global-profiler.trace-size", Int
       .MaxValue)
     printFrequency = config.getIntOrElse("global-profiler.print-frequency",

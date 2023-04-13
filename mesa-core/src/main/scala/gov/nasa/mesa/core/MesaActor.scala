@@ -109,7 +109,7 @@ trait MesaActor extends SubscribingRaceActor with PublishingRaceActor {
     *
     * @param actorName the name of the actor to be generated
     * @param actorConfig the actor configuration
-    * @return a referece to a new actor.
+    * @return a reference to a new actor.
     */
   override def instantiateActor(actorName: String, actorConfig: Config)
   : ActorRef = {

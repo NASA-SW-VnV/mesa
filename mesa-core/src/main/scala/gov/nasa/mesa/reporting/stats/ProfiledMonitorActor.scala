@@ -44,7 +44,7 @@ class ProfiledMonitorActor(config: Config) extends MonitorActor(config) {
     case BusEvent(_,msg,_) => {
       if(!GlobalStatsProfiler.processedAllMsgs) {
         monitor.verifyEvent(msg)
-        //publish(msg)
+        publish(msg)
       }
     }
   }
