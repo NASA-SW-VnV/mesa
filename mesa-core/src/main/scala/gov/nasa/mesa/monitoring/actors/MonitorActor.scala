@@ -59,7 +59,8 @@ class MonitorActor(val config: Config) extends MesaActor {
     */
   def createMonitor (config: Config): MesaMonitor = {
     val monitor = newInstance[MesaMonitor](
-      config.getString("monitor.class"), Array(classOf[Config]), Array(config)).get
+      config.getString(s"${MesaMonitor.confPrefix}.class"),
+      Array(classOf[Config]), Array(config)).get
     info(s"instantiated monitor $name")
     monitor
   }

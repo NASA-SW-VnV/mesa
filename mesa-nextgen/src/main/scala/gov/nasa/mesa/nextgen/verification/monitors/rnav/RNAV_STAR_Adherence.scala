@@ -31,7 +31,7 @@
 package gov.nasa.mesa.nextgen.verification.monitors.rnav
 
 import com.typesafe.config.Config
-import gov.nasa.mesa.core.DautMonitor
+import gov.nasa.mesa.core.{DautMonitor, MesaMonitor}
 import gov.nasa.mesa.nextgen.core._
 import gov.nasa.mesa.nextgen.core.rnav.RnavStar
 
@@ -53,12 +53,12 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
   /**
     * The airport including the RNAV STAR procedure to be monitored.
     */
-  val airport: Airport = Airport.getAirport(config.getString("airport")).get
+  val airport: Airport = Airport.getAirport(config.getString(s"${MesaMonitor.confPrefix}.airport")).get
 
   /**
     * The RNAV STAR procedure to be monitored.
     */
-  val rnavStar: RnavStar = airport.getRnavStar(config.getString("star")).orNull
+  val rnavStar: RnavStar = airport.getRnavStar(config.getString(s"${MesaMonitor.confPrefix}.star")).orNull
 
   /**
     * The final waypoint of the RNAV STAR procedure to be monitored.
@@ -101,7 +101,6 @@ class RNAV_STAR_Adherence(config: Config) extends DautMonitor(config) {
         println(s"** ${ft.cs} at ${wp.id}")
     case StarChanged(ft: ExtendedFlightState) => // ignore
     case FlightCompleted(_, _) => // ignore
-
   }
 
   /**

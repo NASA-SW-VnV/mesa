@@ -47,8 +47,8 @@ class RNAV_STAR_AdherenceSpec extends RaceActorSpec with AnyWordSpecLike {
 
   val config: Config = ConfigFactory.parseString(
     """{
-      airport = "KSFO"
-      star = "BDEGA3"
+         monitor.airport = "KSFO"
+         monitor.star = "BDEGA3"
       }""")
 
   // ExtendedFlightState definition

@@ -31,6 +31,7 @@
 package gov.nasa.mesa.core
 
 import com.typesafe.config.Config
+import gov.nasa.race.config.ConfigUtils.ConfigWrapper
 import daut.DautOptions
 import gov.nasa.mesa.reporting.stats.GlobalStatsProfiler
 
@@ -39,6 +40,10 @@ import gov.nasa.mesa.reporting.stats.GlobalStatsProfiler
   */
 trait MesaMonitor {
   def verifyEvent(event: Any): Unit
+}
+
+object MesaMonitor {
+  val confPrefix = "monitor"
 }
 
 /** This class is used to integrate the TraceContract DSL into MESA.
@@ -53,7 +58,11 @@ trait MesaMonitor {
 class TraceContractMonitor(val config: Config) extends
   tracecontract.Monitor[Any] with MesaMonitor {
 
-  setPrint(false)
+  val tcPrefix = s"${MesaMonitor.confPrefix}.tracecontract"
+
+  setPrint(config.getBooleanOrElse(s"$tcPrefix.print-error", true))
+  setDebug(config.getBooleanOrElse(s"$tcPrefix.debug-option", false))
+  setSuccess(config.getBooleanOrElse(s"$tcPrefix.print-success", false))
 
   def verifyEvent(event: Any): Unit = {
     val before = getMonitorResult.numberOfErrors
@@ -75,8 +84,10 @@ class TraceContractMonitor(val config: Config) extends
 class DautMonitor(val config: Config) extends daut.Monitor[Any]
   with MesaMonitor {
 
-  DautOptions.DEBUG = false
-  DautOptions.PRINT_ERROR_BANNER = false
+  val dautPrefix = s"${MesaMonitor.confPrefix}.daut"
+
+  DautOptions.DEBUG = config.getBooleanOrElse(s"$dautPrefix.debug-option", false)
+  DautOptions.PRINT_ERROR_BANNER = config.getBooleanOrElse(s"$dautPrefix.print-error", true)
 
   def verifyEvent(event: Any): Unit = {
     val before = getErrorCount
